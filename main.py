@@ -25,13 +25,17 @@ chest = rpg.Chest(['longsword', 'iron helmet'], 2, 50, 25)
 # galadriel.purse.__gold = 2000
 
 print(conan.__dict__)
+print(galadriel.__dict__)
+print(grok.__dict__)
 
-galadriel.purse.value = (20, 10, 5)
-g, s, c = galadriel.purse.value
-print(f'{galadriel.name} has {g} gold.')
+# rpg.Character.available_races.append('Ogre')
+print(rpg.Character.is_valid_race('Troll'))
+# galadriel.purse.value = (20, 10, 5)
+# g, s, c = galadriel.purse.value
+# print(f'{galadriel.name} has {g} gold.')
 
 
-chest.loot(galadriel)
+# chest.loot(galadriel)
 
 # print(chest.__dict__)
 # print(galadriel.__dict__)
