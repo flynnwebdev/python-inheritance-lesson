@@ -1,25 +1,31 @@
 class Currency:
     def __init__(self, gold, silver, copper):
-        self.set(gold, silver, copper)
+        self.value = (gold, silver, copper)
 
-    def set(self, gold, silver, copper):
-        self.gold = gold
-        self.silver = silver
-        self.copper = copper
+    @property
+    def value(self):
+        return self.__gold, self.__silver, self.__copper
+
+    @value.setter
+    def value(self, value_tuple):
+        gold, silver, copper = value_tuple
+        self.__gold = gold
+        self.__silver = silver
+        self.__copper = copper
 
     def add(self, gold, silver, copper):
-        self.gold += gold
-        self.silver += silver
-        self.copper += copper
+        self.__gold += gold
+        self.__silver += silver
+        self.__copper += copper
 
     # Define a string representation of the object
     # Should return a Python expression that reconstructs the object
     # Intended for use by developers
     def __repr__(self):
-        return f'Currency(gold={self.gold}, silver={self.silver}, copper={self.copper})'
+        return f'Currency(gold={self.__gold}, silver={self.__silver}, copper={self.__copper})'
 
     def __str__(self):
-        return f'{self.gold}G {self.silver}S {self.copper}C'
+        return f'{self.__gold}G {self.__silver}S {self.__copper}C'
 
 
 class Character:
@@ -54,9 +60,7 @@ class Chest:
 
     # Transfer contents of this chest to character
     def loot(self, character):
-        character.purse.add(self.cash.gold, self.cash.silver, self.cash.copper)
-        self.cash.gold = 0
-        self.cash.silver = 0
-        self.cash.copper = 0
-
+        gold, silver, copper = self.cash.value
+        character.purse.add(gold, silver, copper)
+        self.cash.value = (0, 0, 0)
     
