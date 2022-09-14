@@ -1,4 +1,4 @@
-from calculator import square
+from oop.calculator import square
 
 def test_square():
     assert square(2) == 4
