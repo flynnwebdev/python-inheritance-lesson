@@ -21,6 +21,8 @@ def get_username():
     if not name in valid_users:
         raise InvalidUserError(name)
 
+    return name
+
 
 while True:
     try:
