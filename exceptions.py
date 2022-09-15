@@ -24,17 +24,22 @@ def get_username():
     return name
 
 
-while True:
-    try:
-        x = get_int()
-        print(1 / x)
-        break
-    except RangeError as err:
-        print(err)
-    except ValueError:
-        print('Input must be an integer')
-    except ZeroDivisionError:
-        print('Input cannot be zero')
+def main():
+    while True:
+        try:
+            x = get_int()
+            print(1 / x)
+            break
+        except RangeError as err:
+            print(err)
+        except ValueError:
+            print('Input must be an integer')
+        except ZeroDivisionError:
+            print('Input cannot be zero')
 
 
-print(f'You entered {x}')
+    print(f'You entered {x}')
+
+
+if __name__ == '__main__':
+    main()
