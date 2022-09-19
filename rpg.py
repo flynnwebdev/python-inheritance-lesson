@@ -1,6 +1,14 @@
+from dataclasses import dataclass
+
 class Currency:
     def __init__(self, gold, silver, copper):
         self.value = (gold, silver, copper)
+
+    def __rebalance(self):
+        self.__silver += self.__copper // 100
+        self.__copper %= 100
+        self.__gold += self.__silver // 100
+        self.__silver %= 100
 
     @property
     def value(self):
@@ -12,11 +20,30 @@ class Currency:
         self.__gold = gold
         self.__silver = silver
         self.__copper = copper
+        self.__rebalance()
 
-    def add(self, gold, silver, copper):
+    def __iadd__(self, other):
+        if not isinstance(other, (Currency, int)):
+            raise TypeError("other must be Currency or int")
+
+        if isinstance(other, Currency):
+            gold, silver, copper = other.value
+        else:
+            gold, silver, copper = (0, 0, other)
+
         self.__gold += gold
         self.__silver += silver
         self.__copper += copper
+        self.__rebalance()
+        return self
+
+    def __add__(self, other):
+        gold, silver, copper = other.value
+        return Currency(
+            self.__gold + gold,
+            self.__silver + silver,
+            self.__copper + copper
+        )
 
     # Define a string representation of the object
     # Should return a Python expression that reconstructs the object
@@ -28,27 +55,38 @@ class Currency:
         return f'{self.__gold}G {self.__silver}S {self.__copper}C'
 
 
-class Character:
-    __available_races = ['Human', 'Elf', 'Orc', 'Goblin', 'Dwarf']
-
-    def __init__(self, name, race, *, health=100, attack=10):
-        self.name = name
-        self.race = race
+class Combat:
+    def __init__(self, health=100, attack=10):
         self.health = health
         self.attack = attack
-        self.purse = Currency(0, 0, 0)
-
-    @classmethod
-    def is_valid_race(cls, race):
-        return race in cls.__available_races
 
     def battle(self, other):
         print(f'{self.name} launches a brutal melee attack on {other.name}!!')
 
 
-class Mage(Character):
+@dataclass
+class Character:
+    __available_races = ['Human', 'Elf', 'Orc', 'Goblin', 'Dwarf']
+
+    name: str = ''
+    race: str = ''
+    purse: Currency = Currency(0, 0, 0)
+
+    @classmethod
+    def is_valid_race(cls, race):
+        return race in cls.__available_races
+
+
+class Warrior(Character, Combat):
+    def __init__(self, name, race, *, health=100, attack=30):
+        Character.__init__(self)
+        Combat.__init__(self, health=health, attack=attack)
+
+
+class Mage(Character, Combat):
     def __init__(self, name, race, *, health=40, attack=50, mana=200):
-        super().__init__(name, race, health=health, attack=attack)
+        Character.__init__(self)
+        Combat.__init__(self, health=health, attack=attack)
         self.mana = mana
 
     def cast(self, spell):
@@ -59,6 +97,12 @@ class Mage(Character):
         self.cast('fireball')
 
 
+@dataclass
+class Vendor(Character):
+    __inventory: list = []
+    purse: Currency = Currency(1000, 0, 0)
+
+
 class Chest:
     def __init__(self, items, gold, silver, copper):
         self.items = items
@@ -66,7 +110,8 @@ class Chest:
 
     # Transfer contents of this chest to character
     def loot(self, character):
-        gold, silver, copper = self.cash.value
-        character.purse.add(gold, silver, copper)
+        # gold, silver, copper = self.cash.value
+        # character.purse.add(gold, silver, copper)
+        character.purse += self.cash
         self.cash.value = (0, 0, 0)
     
